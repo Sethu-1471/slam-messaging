@@ -3,7 +3,7 @@
 
 https://slam-messaging.web.app/
 
-Slack Clone
+Slack Clone. You can add channel and message
 
 ## Available Scripts
 
