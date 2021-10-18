@@ -1,69 +1,83 @@
-import { Button } from '@material-ui/core';
-import React from 'react'
-import styled from 'styled-components'
-import { db } from "../firebase";
-import firebase from 'firebase'
-import { useAuthState } from "react-firebase-hooks/auth"
-import { auth } from "../firebase"
+import { Button } from "@material-ui/core";
+import React from "react";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
 
-function ChatInput({ channelId, channelName, chatRef }) {
-    const [input, setInput] = React.useState('');
-    const inputRef = React.useRef(null);
-    const [user] = useAuthState(auth);
-
-    const sendMessage = (e) => {
-        e.preventDefault();
-
-        if (!channelId) {
-            return false;
-        }
-
-        db.collection('room').doc(channelId).collection('message').add({
-            message: input,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-            user: user.displayName,
-            userImage: user.photoURL
-        })
-        chatRef?.current?.scrollIntoView({
-            behavior: "smooth"
-        });
-        setInput("");
+function ChatInput({ channelId, channelName, chatRef, number }) {
+  const [input, setInput] = React.useState("");
+  const inputRef = React.useRef(null);
+  const socket = window.socket;
+  const user = useSelector((state) => state.getUser);
+  const sendMessage = (e) => {
+    e.preventDefault();
+    console.log("Sending...");
+    if (!channelId) {
+      return false;
     }
-    return (
-        <ChatInputContainer>
-            <form>
-                <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)} placeholder={`Message #${channelName}`} />
-                <Button hidden type="submit" onClick={sendMessage}>
-                    SEND
-                </Button>
-            </form>
-        </ChatInputContainer>
-    )
+    socket.emit("messageSend", {
+      message: input,
+      senderName: user.name,
+      senderNum: user.contact,
+      roomId: channelId,
+      recieverNumber: number,
+    });
+    // chatRef?.current?.scrollIntoView({
+    //   behavior: "smooth",
+    // });
+    setInput("");
+  };
+
+  React.useEffect(() => {
+    setInput("");
+  }, [channelId]);
+
+  return (
+    <ChatInputContainer>
+      <form>
+        <div>
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={`Message #${channelName}`}
+          />
+          <Button hidden type="submit" onClick={sendMessage}>
+            SEND
+          </Button>
+        </div>
+      </form>
+    </ChatInputContainer>
+  );
 }
 
 export default ChatInput;
 
 const ChatInputContainer = styled.div`
-    border-radius: 20px;
+  > form {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex: 1;
+  }
+  > form > div {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 0px;
+    background-color: #f1f1f0;
+    height: 67px;
+    width: 85%;
+  }
+  > form > div > input {
+    border: none;
+    border-radius: 50px;
+    padding: 15px;
+    outline: none;
+    width: 60%;
+  }
 
-    >form {
-        position: relative;
-        display: flex;
-        justify-content: center;
-    }
-
-    >form >input {
-        position: fixed;
-        bottom: 30px;
-        width: 60%;
-        border: 1px solid gray;
-        border-radius: 3px;
-        padding: 20px;
-        outline: none;
-    }
-
-    >form >button {
-        display: none !important;
-         
-    }
+  > form > div > button {
+  }
 `;

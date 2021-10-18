@@ -15,12 +15,12 @@ import { Avatar } from "@material-ui/core";
 
 import React from "react";
 import styled from "styled-components";
-import SideBarOptions from "./SideBarOptions";
 import { useSelector } from "react-redux";
 
 export default function SideBar() {
   const user = useSelector((state) => state.getUser);
   const list = useSelector((state) => state.listUserReducer);
+
   return (
     <SideBarContainer>
       <SideBarHeader>
@@ -34,45 +34,18 @@ export default function SideBar() {
         {/* <Create /> */}
         <ImageAvatar style={{ margin: 0 }} />
       </SideBarHeader>
-
-      {/* <SideBarOptions Icon={InsertComment} title="Tread" />
-      <SideBarOptions Icon={Inbox} title="Mentions" />
-      <SideBarOptions Icon={Drafts} title="Charts" />
-      <SideBarOptions Icon={BookmarkBorder} title="Bookamrk" />
-      <SideBarOptions Icon={PeopleAlt} title="People" />
-      <SideBarOptions Icon={FileCopy} title="file" /> */}
-      {/* <hr /> */}
-
-      <SideBarOptions Icon={Add} title="New Chat" addChannelOption />
-      {/* <SideBarOptions Image={PlusOne} title="Sethu" /> */}
-
-      {list.listUser.length ? (
-        list.listUser.map((doc) => (
-          <SideBarOptions
-            key={doc._id}
-            id={doc._id}
-            Image={PlusOne}
-            title={
-              +doc.phone === +user.contact ? doc.phoneTwoName : doc.phoneName
-            }
-            number={+doc.phone === +user.contact ? doc.phoneTwo : doc.phone}
-          />
-        ))
-      ) : (
-        <p>No Chat</p>
-      )}
     </SideBarContainer>
   );
 }
 
 const SideBarContainer = styled.div`
-  background-color: white;
+  background-color: red;
   color: black;
   flex: 0.3;
   border-top: 1px solid white;
   max-width: 17%;
   margin-top: 60px;
-  z-index: 4;
+  z-index: 6;
 
   > hr {
     margin: 10px 0;
@@ -91,10 +64,9 @@ const ImageAvatar = styled(Avatar)`
 const SideBarHeader = styled.div`
   display: flex;
   border-bottom: 1px solid lightgray;
-  padding: 0px 10px;
+  padding: 10px;
   max-height: 65px;
-  align-items: center;
-  min-height: 65px;
+
   > .MuiSvgIcon-root {
     padding: 8px;
     color: black;
